@@ -173,9 +173,6 @@ MKL_Complex16* NeuralDensityOperators::GetRoMatrix(double *work_time, bool plot)
     int N_v = FirstSiameseRBM.N_v;
     const int N_v_N_v = N_v * N_v;
     MKL_Complex16* RoMatrix = new MKL_Complex16[N_v_N_v];
-    MKL_Complex16 Sum(0.0, 0.0);
-
-    auto start = std::chrono::high_resolution_clock::now();
 
     acc_number* FirstSigma, * SecondSigma;
     FirstSigma = new acc_number[N_v];
@@ -189,23 +186,25 @@ MKL_Complex16* NeuralDensityOperators::GetRoMatrix(double *work_time, bool plot)
     unsigned int max_threads = omp_get_max_threads();
     omp_set_num_threads(max_threads);
 
+    auto start = std::chrono::high_resolution_clock::now();
+
     //#pragma omp parallel for
     for (int i = 0; i < N_v; i++) {
         for (int j = 0; j < N_v; j++) {
             FirstSigma[i] = ONE;
             SecondSigma[j] = ONE;
 
-            MKL_Complex16 Element = GetRo(N_v, FirstSigma, SecondSigma);
-
-            if (i == j) {
-                Sum += Element;
-            }
-
-            RoMatrix[j + i * N_v] = Element;
+            RoMatrix[j + i * N_v] = GetRo(N_v, FirstSigma, SecondSigma);
 
             FirstSigma[i] = ZERO;
             SecondSigma[j] = ZERO;
         }
+    }
+
+    MKL_Complex16 Sum(0.0, 0.0);
+
+    for (int i = 0; i < N_v; i++) {
+        Sum += RoMatrix[i + i * N_v];
     }
 
     for (int i = 0; i < N_v; i++) {
