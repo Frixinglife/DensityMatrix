@@ -188,8 +188,16 @@ MKL_Complex16* NeuralDensityOperators::GetRoMatrix(double *work_time, bool plot)
 
     auto start = std::chrono::high_resolution_clock::now();
 
-    //#pragma omp parallel for
+    #pragma omp parallel for
     for (int i = 0; i < N_v; i++) {
+        acc_number* FirstSigma = new acc_number[N_v];
+        acc_number* SecondSigma = new acc_number[N_v];
+
+        for (int k = 0; k < N_v; k++) {
+            FirstSigma[k] = ZERO;
+            SecondSigma[k] = ZERO;
+        }
+
         for (int j = 0; j < N_v; j++) {
             FirstSigma[i] = ONE;
             SecondSigma[j] = ONE;
@@ -199,6 +207,9 @@ MKL_Complex16* NeuralDensityOperators::GetRoMatrix(double *work_time, bool plot)
             FirstSigma[i] = ZERO;
             SecondSigma[j] = ZERO;
         }
+
+        delete[]FirstSigma;
+        delete[]SecondSigma;
     }
 
     MKL_Complex16 Sum(0.0, 0.0);
@@ -214,9 +225,6 @@ MKL_Complex16* NeuralDensityOperators::GetRoMatrix(double *work_time, bool plot)
     }
 
     auto diff = std::chrono::high_resolution_clock::now() - start;
-
-    delete[]FirstSigma;
-    delete[]SecondSigma;
 
     if (work_time != nullptr) {
         *work_time = static_cast<double>(std::chrono::duration_cast<std::chrono::seconds>(diff).count());
