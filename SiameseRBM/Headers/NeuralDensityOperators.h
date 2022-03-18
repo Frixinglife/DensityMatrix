@@ -14,10 +14,10 @@ public:
 
     void PrintRBMs() const;
 
-    acc_number GetGamma(int N, acc_number* FirstSigma, acc_number* SecondSigma, char PlusOrMinus);
-    TComplex GetPi(int N, acc_number* FirstSigma, acc_number* SecondSigma);
-    TComplex GetRo(int N, acc_number* FirstSigma, acc_number* SecondSigma);
-    TComplex* GetRoMatrix(double *work_time = nullptr, bool plot = false);
+    double GetGamma(int N, acc_number* FirstSigma, acc_number* SecondSigma, char PlusOrMinus);
+    MKL_Complex16 GetPi(int N, acc_number* FirstSigma, acc_number* SecondSigma);
+    MKL_Complex16 GetRo(int N, acc_number* FirstSigma, acc_number* SecondSigma);
+    MKL_Complex16* GetRoMatrix(double *work_time = nullptr, bool plot = false);
 };
 
 #endif //_NEURAL_DENSITY_OPERATORS_H_

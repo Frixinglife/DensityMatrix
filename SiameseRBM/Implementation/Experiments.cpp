@@ -7,7 +7,7 @@
 
 using std::cout;
 
-void Experiments::PrintRoMatrix(int N, TComplex* Matrix) {
+void Experiments::PrintRoMatrix(int N, MKL_Complex16* Matrix) {
     cout << "Ro matrix:" << "\n\n";
 
     for (int i = 0; i < N; i++) {
@@ -19,7 +19,7 @@ void Experiments::PrintRoMatrix(int N, TComplex* Matrix) {
     std::cout << "\n";
 }
 
-void Experiments::PrintEigRoMatrix(int N, acc_number* Vec) {
+void Experiments::PrintEigRoMatrix(int N, double* Vec) {
     cout << "Eigenvalues:\n\n";
 
     for (int i = 0; i < N; i++) {
@@ -32,10 +32,10 @@ void Experiments::GetRoMatrixAndEig(int N_v, int N_h, int N_a, bool plot) {
 
     DensityOperators.PrintRBMs();
 
-    TComplex* RoMatrix = DensityOperators.GetRoMatrix(nullptr, plot);
+    MKL_Complex16* RoMatrix = DensityOperators.GetRoMatrix(nullptr, plot);
     PrintRoMatrix(N_v, RoMatrix);
 
-    acc_number* EigVector = new acc_number[N_v];
+    double* EigVector = new double[N_v];
 
     MatrixAndVectorOperations::FindEigMatrix(N_v, RoMatrix, EigVector);
     PrintEigRoMatrix(N_v, EigVector);
@@ -50,17 +50,17 @@ void Experiments::GetWorkTime(int N_v, int N_h, int N_a, bool plot) {
     NeuralDensityOperators DensityOperators(N_v, N_h, N_a);
 
     double work_time = 0.0;
-    TComplex* RoMatrix = DensityOperators.GetRoMatrix(&work_time, plot);
+    MKL_Complex16* RoMatrix = DensityOperators.GetRoMatrix(&work_time, plot);
 
     std::cout << "N_v = " << N_v << ", N_h = " << N_h << ", N_a = " << N_a << "\n";
     std::cout << "Matrix size: " << N_v << "\n";
-    std::cout << "Time: " << work_time << " s\n";
-    std::cout << "Data tipe: " << TYPE_OUT << "\n\n";
+    std::cout << "Data type: " << TYPE_OUT << "\n";
+    std::cout << "Time: " << work_time << " s\n\n";
 
     fout << "N_v = " << N_v << ", N_h = " << N_h << ", N_a = " << N_a << "\n";
     fout << "Matrix size: " << N_v << "\n";
-    fout << "Time: " << work_time << " s\n";
-    fout << "Data tipe: " << TYPE_OUT << "\n\n";
+    fout << "Data type: " << TYPE_OUT << "\n";
+    fout << "Time: " << work_time << " s\n\n";
 
     delete[]RoMatrix;
 }

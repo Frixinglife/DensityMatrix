@@ -8,7 +8,6 @@
 	#define acc_number double
 	#define TRngUniform vdRngUniform
 	#define Tcblas_v cblas_dgemv
-	#define Tgeev zgeev
 	#define MATRIX_OUT "matrix_diag_double.txt"
 	#define TYPE_OUT "double"
 #else
@@ -17,7 +16,6 @@
 	#define acc_number float
 	#define TRngUniform vsRngUniform
 	#define Tcblas_v cblas_sgemv
-	#define Tgeev cgeev
 	#define MATRIX_OUT "matrix_diag_float.txt"
 	#define TYPE_OUT "float"
 #endif

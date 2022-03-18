@@ -13,8 +13,8 @@ public:
     static void MultVectorByNumber(int N, acc_number* Vec, acc_number Number, acc_number* Result);
     static void MatrixVectorMult(int N, int M, acc_number* Matrix, acc_number* Vec, acc_number* Result);
     static void MKL_MatrixVectorMult(int N, int M, acc_number* Matrix, acc_number* Vec, acc_number* Result);
-    static void FindEigMatrix(int N, TComplex* Matrix, acc_number* Result);
     static void PrintVector(int N, acc_number* Vec, const std::string& Text);
+    static void FindEigMatrix(int N, MKL_Complex16* Matrix, double* Result);
 };
 
 #endif //_MATRIX_AND_VECTOR_OPERATIONS_H_

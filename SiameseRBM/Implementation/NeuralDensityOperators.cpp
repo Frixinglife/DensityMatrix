@@ -9,6 +9,10 @@
 
 using std::cout;
 
+acc_number ONE = (acc_number)1.0;
+acc_number HALF = (acc_number)0.5;
+acc_number ZERO = (acc_number)0.0;
+
 NeuralDensityOperators::NeuralDensityOperators(int N_v, int N_h, int N_a) {
     const int N_h_N_v = N_h * N_v;
     const int N_a_N_v = N_a * N_v;
@@ -62,10 +66,9 @@ void NeuralDensityOperators::PrintRBMs() const {
     SecondSiameseRBM.PrintSiameseRBM("Second siamese RBM");
 }
 
-acc_number NeuralDensityOperators::GetGamma(int N, acc_number* FirstSigma, acc_number* SecondSigma, char PlusOrMinus) {
+double NeuralDensityOperators::GetGamma(int N, acc_number* FirstSigma, acc_number* SecondSigma, char PlusOrMinus) {
     int N_h, N_v;
-    acc_number Answer = 0.0;
-    acc_number One = 1.0;
+    double Answer = 0.0;
     acc_number* FirstVec, * SecondVec, * IntermedVec;
 
     N_h = FirstSiameseRBM.N_h;
@@ -78,7 +81,7 @@ acc_number NeuralDensityOperators::GetGamma(int N, acc_number* FirstSigma, acc_n
     switch (PlusOrMinus) {
     case '+':
         MatrixAndVectorOperations::VectorsAdd(N, FirstSigma, SecondSigma, IntermedVec);
-        Answer = MatrixAndVectorOperations::ScalarVectorMult(N, FirstSiameseRBM.b, IntermedVec);
+        Answer = (double)MatrixAndVectorOperations::ScalarVectorMult(N, FirstSiameseRBM.b, IntermedVec);
 
         MatrixAndVectorOperations::MKL_MatrixVectorMult(N_h, N_v, FirstSiameseRBM.W, FirstSigma, FirstVec);
         MatrixAndVectorOperations::MKL_MatrixVectorMult(N_h, N_v, FirstSiameseRBM.W, SecondSigma, SecondVec);
@@ -87,14 +90,16 @@ acc_number NeuralDensityOperators::GetGamma(int N, acc_number* FirstSigma, acc_n
         MatrixAndVectorOperations::VectorsAdd(N_h, SecondVec, FirstSiameseRBM.c, SecondVec);
         
         for (int i = 0; i < N_h; ++i) {
-            Answer += std::log(One + std::exp(FirstVec[i])) + std::log(One + std::exp(SecondVec[i]));
+            double First = (double)FirstVec[i];
+            double Second = (double)SecondVec[i];
+            Answer += std::log(1.0 + std::exp(First)) + std::log(1.0 + std::exp(Second));
         }
 
         break;
 
     case '-':
         MatrixAndVectorOperations::VectorsSub(N, FirstSigma, SecondSigma, IntermedVec);
-        Answer = MatrixAndVectorOperations::ScalarVectorMult(N, SecondSiameseRBM.b, IntermedVec);
+        Answer = (double)MatrixAndVectorOperations::ScalarVectorMult(N, SecondSiameseRBM.b, IntermedVec);
 
         MatrixAndVectorOperations::MKL_MatrixVectorMult(N_h, N_v, SecondSiameseRBM.W, FirstSigma, FirstVec);
         MatrixAndVectorOperations::MKL_MatrixVectorMult(N_h, N_v, SecondSiameseRBM.W, SecondSigma, SecondVec);
@@ -103,7 +108,9 @@ acc_number NeuralDensityOperators::GetGamma(int N, acc_number* FirstSigma, acc_n
         MatrixAndVectorOperations::VectorsAdd(N_h, SecondVec, SecondSiameseRBM.c, SecondVec);
 
         for (int i = 0; i < N_h; ++i) {
-            Answer += std::log(One + std::exp(FirstVec[i])) - std::log(One + std::exp(SecondVec[i]));
+            double First = (double)FirstVec[i];
+            double Second = (double)SecondVec[i];
+            Answer += std::log(1.0 + std::exp(First)) - std::log(1.0 + std::exp(Second));
         }
 
         break;
@@ -116,20 +123,17 @@ acc_number NeuralDensityOperators::GetGamma(int N, acc_number* FirstSigma, acc_n
     delete[]FirstVec;
     delete[]SecondVec;
 
-    acc_number half_numb = 0.5;
-
-    Answer *= half_numb;
+    Answer *= 0.5;
 
     return Answer;
 }
 
-TComplex NeuralDensityOperators::GetPi(int N, acc_number* FirstSigma, acc_number* SecondSigma) {
-    TComplex Answer(0.0, 0.0);
+MKL_Complex16 NeuralDensityOperators::GetPi(int N, acc_number* FirstSigma, acc_number* SecondSigma) {
+    MKL_Complex16 Answer(0.0, 0.0);
+    MKL_Complex16 One(1.0, 0.0);
     int N_a = FirstSiameseRBM.N_a;
     int N_v = FirstSiameseRBM.N_v;
     acc_number* FirstVec, * SecondVec, * Vec;
-
-    acc_number half_numb = 0.5;
     
     Vec = new acc_number[N];
     FirstVec = new acc_number[N_a];
@@ -141,15 +145,13 @@ TComplex NeuralDensityOperators::GetPi(int N, acc_number* FirstSigma, acc_number
     MatrixAndVectorOperations::VectorsSub(N, FirstSigma, SecondSigma, Vec);
     MatrixAndVectorOperations::MKL_MatrixVectorMult(N_a, N_v, SecondSiameseRBM.V, Vec, SecondVec);
 
-    MatrixAndVectorOperations::MultVectorByNumber(N_a, FirstVec, half_numb, FirstVec);
-    MatrixAndVectorOperations::MultVectorByNumber(N_a, SecondVec, half_numb, SecondVec);
+    MatrixAndVectorOperations::MultVectorByNumber(N_a, FirstVec, HALF, FirstVec);
+    MatrixAndVectorOperations::MultVectorByNumber(N_a, SecondVec, HALF, SecondVec);
 
     MatrixAndVectorOperations::VectorsAdd(N_a, FirstVec, FirstSiameseRBM.d, FirstVec);    
 
     for (int i = 0; i < N_a; ++i) {
-        TComplex CurrentAnswer(FirstVec[i], SecondVec[i]);
-        TComplex One(1.0, 0.0);
-
+        MKL_Complex16 CurrentAnswer((double)FirstVec[i], (double)SecondVec[i]);
         Answer += std::log(One + std::exp(CurrentAnswer));
     }
 
@@ -160,18 +162,18 @@ TComplex NeuralDensityOperators::GetPi(int N, acc_number* FirstSigma, acc_number
     return Answer;
 }
 
-TComplex NeuralDensityOperators::GetRo(int N, acc_number* FirstSigma, acc_number* SecondSigma) {
-    TComplex Gamma(GetGamma(N, FirstSigma, SecondSigma, '+'), GetGamma(N, FirstSigma, SecondSigma, '-'));
-    TComplex Pi = GetPi(N, FirstSigma, SecondSigma);
+MKL_Complex16 NeuralDensityOperators::GetRo(int N, acc_number* FirstSigma, acc_number* SecondSigma) {
+    MKL_Complex16 Gamma(GetGamma(N, FirstSigma, SecondSigma, '+'), GetGamma(N, FirstSigma, SecondSigma, '-'));
+    MKL_Complex16 Pi = GetPi(N, FirstSigma, SecondSigma);
 
     return std::exp(Gamma + Pi);
 }
 
-TComplex* NeuralDensityOperators::GetRoMatrix(double *work_time, bool plot) {
+MKL_Complex16* NeuralDensityOperators::GetRoMatrix(double *work_time, bool plot) {
     int N_v = FirstSiameseRBM.N_v;
     const int N_v_N_v = N_v * N_v;
-    TComplex* RoMatrix = new TComplex[N_v_N_v];
-    TComplex Sum(0.0, 0.0);
+    MKL_Complex16* RoMatrix = new MKL_Complex16[N_v_N_v];
+    MKL_Complex16 Sum(0.0, 0.0);
 
     auto start = std::chrono::high_resolution_clock::now();
 
@@ -190,10 +192,10 @@ TComplex* NeuralDensityOperators::GetRoMatrix(double *work_time, bool plot) {
     //#pragma omp parallel for
     for (int i = 0; i < N_v; i++) {
         for (int j = 0; j < N_v; j++) {
-            FirstSigma[i] = 1.0;
-            SecondSigma[j] = 1.0;
+            FirstSigma[i] = ONE;
+            SecondSigma[j] = ONE;
 
-            TComplex Element = GetRo(N_v, FirstSigma, SecondSigma);
+            MKL_Complex16 Element = GetRo(N_v, FirstSigma, SecondSigma);
 
             if (i == j) {
                 Sum += Element;
@@ -201,8 +203,8 @@ TComplex* NeuralDensityOperators::GetRoMatrix(double *work_time, bool plot) {
 
             RoMatrix[j + i * N_v] = Element;
 
-            FirstSigma[i] = 0.0;
-            SecondSigma[j] = 0.0;
+            FirstSigma[i] = ZERO;
+            SecondSigma[j] = ZERO;
         }
     }
 

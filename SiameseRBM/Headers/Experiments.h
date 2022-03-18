@@ -6,8 +6,8 @@
 
 class Experiments {
 public:
-    static void PrintRoMatrix(int N, TComplex* Matrix);
-    static void PrintEigRoMatrix(int N, acc_number* Vec);
+    static void PrintRoMatrix(int N, MKL_Complex16* Matrix);
+    static void PrintEigRoMatrix(int N, double* Vec);
     static void GetRoMatrixAndEig(int N_v, int N_h, int N_a, bool plot = false);
     static void GetWorkTime(int N_v, int N_h, int N_a, bool plot = false);
 };
