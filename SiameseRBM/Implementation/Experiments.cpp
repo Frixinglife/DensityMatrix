@@ -100,7 +100,7 @@ void Experiments::GetTransitionMatrixAndNewRo(int N, bool show) {
     }
     std::cout << "\n";
 
-    std::cout << "Trace sum: " << trace << "\n\n";
+    std::cout << "Trace: " << trace << "\n\n";
 
     for (int i = 0; i < N; i++) {
         NewRoMatrixDiag[i] /= trace;

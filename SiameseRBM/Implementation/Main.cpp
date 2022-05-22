@@ -9,7 +9,7 @@ int main() {
 
     int N;
     std::cin >> N;
-    int NumberOfSamples = 10;
+    int NumberOfSamples = 15;
     Experiments::GetTransitionMatrixAndNewRo(N, true);
     Experiments::GetSamples(N, NumberOfSamples);
 
