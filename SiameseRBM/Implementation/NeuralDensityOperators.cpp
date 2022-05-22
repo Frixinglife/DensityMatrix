@@ -162,11 +162,11 @@ MKL_Complex16 NeuralDensityOperators::GetPi(int N, acc_number* FirstSigma, acc_n
     return Answer;
 }
 
-MKL_Complex16 NeuralDensityOperators::GetRo(int N, acc_number* FirstSigma, acc_number* SecondSigma) {
+MKL_Complex16 NeuralDensityOperators::GetRoWithoutExp(int N, acc_number* FirstSigma, acc_number* SecondSigma) {
     MKL_Complex16 Gamma(GetGamma(N, FirstSigma, SecondSigma, '+'), GetGamma(N, FirstSigma, SecondSigma, '-'));
     MKL_Complex16 Pi = GetPi(N, FirstSigma, SecondSigma);
 
-    return std::exp(Gamma + Pi);
+    return Gamma + Pi;
 }
 
 MKL_Complex16* NeuralDensityOperators::GetRoMatrix(double *work_time, bool plot) {
@@ -202,7 +202,7 @@ MKL_Complex16* NeuralDensityOperators::GetRoMatrix(double *work_time, bool plot)
             FirstSigma[i] = ONE;
             SecondSigma[j] = ONE;
 
-            RoMatrix[j + i * N_v] = GetRo(N_v, FirstSigma, SecondSigma);
+            RoMatrix[j + i * N_v] = GetRoWithoutExp(N_v, FirstSigma, SecondSigma);
 
             FirstSigma[i] = ZERO;
             SecondSigma[j] = ZERO;
@@ -210,6 +210,25 @@ MKL_Complex16* NeuralDensityOperators::GetRoMatrix(double *work_time, bool plot)
 
         delete[]FirstSigma;
         delete[]SecondSigma;
+    }
+
+    double MaxRe = 0.0;
+
+    for (int i = 0; i < N_v; i++) {
+        for (int j = 0; j < N_v; j++) {
+            double CurRe = RoMatrix[j + i * N_v].real();
+            if (CurRe > MaxRe) {
+                MaxRe = CurRe;
+            }
+        }
+    }
+
+    for (int i = 0; i < N_v; i++) {
+        for (int j = 0; j < N_v; j++) {
+            MKL_Complex16 Elem = RoMatrix[j + i * N_v];
+            MKL_Complex16 NewElem(Elem.real() - MaxRe, Elem.imag());
+            RoMatrix[j + i * N_v] = std::exp(NewElem);
+        }
     }
 
     MKL_Complex16 Sum(0.0, 0.0);
@@ -232,8 +251,6 @@ MKL_Complex16* NeuralDensityOperators::GetRoMatrix(double *work_time, bool plot)
 
     if (plot) {
         std::ofstream fout(MATRIX_OUT, std::ios_base::out | std::ios_base::trunc);
-
-        fout << N_v << "\n";
 
         for (int i = 0; i < N_v; i++) {
             fout << RoMatrix[i + i * N_v].real() << "\n";

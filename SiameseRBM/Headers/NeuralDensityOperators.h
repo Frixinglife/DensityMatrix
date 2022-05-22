@@ -16,7 +16,7 @@ public:
 
     double GetGamma(int N, acc_number* FirstSigma, acc_number* SecondSigma, char PlusOrMinus);
     MKL_Complex16 GetPi(int N, acc_number* FirstSigma, acc_number* SecondSigma);
-    MKL_Complex16 GetRo(int N, acc_number* FirstSigma, acc_number* SecondSigma);
+    MKL_Complex16 GetRoWithoutExp(int N, acc_number* FirstSigma, acc_number* SecondSigma);
     MKL_Complex16* GetRoMatrix(double *work_time = nullptr, bool plot = false);
 };
 
