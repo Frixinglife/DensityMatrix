@@ -1,7 +1,7 @@
 #ifndef _DATA_TYPE_H_
 #define _DATA_TYPE_H_
 
-#define ACC_FLOAT
+#define ACC_DOUBLE
 
 #ifdef ACC_DOUBLE
 	#define TComplex MKL_Complex16

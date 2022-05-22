@@ -5,8 +5,20 @@
 #include "DataType.h"
 
 class TransitionMatrix {
+private:
+    VSLStreamStatePtr stream;
+
 public:
-    static MKL_Complex16* GetTransitionMatrix(int N);
+    TransitionMatrix(int seed = 42);
+    ~TransitionMatrix();
+
+    MKL_Complex16* GetTransitionMatrix(int N, bool show = false);
+    void GetUnitaryMatrices(MKL_Complex16* Matrices, int NumberOfU, 
+        acc_number left = (acc_number)0.0, acc_number right = (acc_number)1.0);
+
+    static MKL_Complex16* GetHermitianConjugateMatrix(MKL_Complex16* Matrix, int N);
+    static MKL_Complex16* GetNewRoMatrix(MKL_Complex16* Ro, MKL_Complex16* Ub, MKL_Complex16* Ub_t, int N);
+    static void PrintMatrix(MKL_Complex16* Matrix, int n, int m, std::string name);
 };
 
 #endif //_TRANSITION_MATRIX_H_

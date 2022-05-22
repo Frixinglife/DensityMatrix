@@ -10,6 +10,8 @@ public:
     static void PrintEigRoMatrix(int N, double* Vec);
     static void GetRoMatrixAndEig(int N_v, int N_h, int N_a, bool plot = false);
     static void GetWorkTime(int N_v, int N_h, int N_a, bool plot = false);
+    static void GetTransitionMatrixAndNewRo(int N, bool show = false);
+    static void GetSamples(int N, int NumberOfSamples);
 };
 
 #endif //_EXPERIMENTS_H_
