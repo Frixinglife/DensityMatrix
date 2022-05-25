@@ -177,3 +177,11 @@ void Experiments::GetSamples(int N, int NumberOfSamples) {
     delete[]Ub;
     delete[]Ub_t;
 }
+
+void Experiments::CheckUnitaryMatrices(int NumberOfU) {
+    TransitionMatrix TM;
+
+    MKL_Complex16* MatricesU = new MKL_Complex16[4 * NumberOfU];
+    TM.GetUnitaryMatrices(MatricesU, NumberOfU);
+    TM.ShowUnitaryMatrices(MatricesU, NumberOfU);
+}

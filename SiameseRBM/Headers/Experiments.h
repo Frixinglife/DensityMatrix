@@ -12,6 +12,7 @@ public:
     static void GetWorkTime(int N_v, int N_h, int N_a, bool plot = false);
     static void GetTransitionMatrixAndNewRo(int N, bool show = false);
     static void GetSamples(int N, int NumberOfSamples);
+    static void CheckUnitaryMatrices(int NumberOfU);
 };
 
 #endif //_EXPERIMENTS_H_

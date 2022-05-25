@@ -7,11 +7,14 @@ int main() {
     //Experiments::GetRoMatrixAndEig(N_v, N_h, N_a);
     //Experiments::GetWorkTime(N_v, N_h, N_a, true);
 
-    int N;
-    std::cin >> N;
-    int NumberOfSamples = 15;
-    Experiments::GetTransitionMatrixAndNewRo(N, true);
-    Experiments::GetSamples(N, NumberOfSamples);
+    //int N;
+    //std::cin >> N;
+    //int NumberOfSamples = 15;
+    //Experiments::GetTransitionMatrixAndNewRo(N, true);
+    //Experiments::GetSamples(N, NumberOfSamples);
+
+    int NumberOfU = 2;
+    
 
     return 0;
 }

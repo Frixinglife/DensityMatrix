@@ -41,7 +41,7 @@ void TransitionMatrix::GetUnitaryMatrices(MKL_Complex16* Matrices, int NumberOfU
 	delete[]ElementsU;
 }
 
-void ShowUnitaryMatrices(MKL_Complex16* Matrices, int NumberOfU) {
+void TransitionMatrix::ShowUnitaryMatrices(MKL_Complex16* Matrices, int NumberOfU) {
 	std::cout << "Number of U: " << NumberOfU << "\n";
 	std::cout << "U matrices:\n";
 	for (int i = 0; i < 2 * NumberOfU; i++) {
@@ -57,7 +57,7 @@ MKL_Complex16 ComplexMult(MKL_Complex16 A, MKL_Complex16 B) {
 	return MKL_Complex16(A.real() * B.real() - A.imag() * B.imag(), A.real() * B.imag() + B.real() * A.imag());
 }
 
-void KroneckerProduction(MKL_Complex16* Matrix_A, int size_A, MKL_Complex16* Matrix_B, int size_B, MKL_Complex16* Matrix_Res, bool show = false) {
+void TransitionMatrix::KroneckerProduction(MKL_Complex16* Matrix_A, int size_A, MKL_Complex16* Matrix_B, int size_B, MKL_Complex16* Matrix_Res, bool show) {
 	if (show) {
 		TransitionMatrix::PrintMatrix(Matrix_A, size_A, size_A, "A");
 		TransitionMatrix::PrintMatrix(Matrix_B, size_B, size_B, "B");
