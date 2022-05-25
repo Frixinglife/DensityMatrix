@@ -66,6 +66,56 @@ void Experiments::GetWorkTime(int N_v, int N_h, int N_a, bool plot) {
     delete[]RoMatrix;
 }
 
+void Experiments::CheckUnitaryMatrices(int NumberOfU) {
+    TransitionMatrix TM;
+
+    MKL_Complex16* MatricesU = new MKL_Complex16[4 * NumberOfU];
+    TM.GetUnitaryMatrices(MatricesU, NumberOfU);
+    TM.ShowUnitaryMatrices(MatricesU, NumberOfU);
+
+    MKL_Complex16* MatricesUt = new MKL_Complex16[4 * NumberOfU];
+    MKL_Complex16* Matrix = new MKL_Complex16[4];
+    for (int i = 0; i < NumberOfU; i++) {
+        Matrix = TM.GetHermitianConjugateMatrix(MatricesU + i * 4, 2);
+        for (int j = 0; j < 4; j++) {
+            MatricesUt[j + i * 4] = Matrix[j];
+        }
+    }
+    std::cout << "U_t matrices:\n";
+    for (int i = 0; i < 2 * NumberOfU; i++) {
+        for (int j = 0; j < 2; j++) {
+            std::cout << std::setw(30) << MatricesUt[j + i * 2];
+        }
+        std::cout << ((i % 2 == 1) ? "\n\n" : "\n");
+    }
+    std::cout << "\n";
+
+    MKL_Complex16* Res = new MKL_Complex16[4 * NumberOfU];
+    for (int i = 0; i < 4 * NumberOfU; i++) {
+        Res[i] = MKL_Complex16(0.0, 0.0);
+    }
+
+    for (int count = 0; count < NumberOfU; count++) {
+        for (int i = 0; i < 2; i++) {
+            for (int j = 0; j < 2; j++) {
+                for (int k = 0; k < 2; k++) {
+                    Res[j + i * 2 + 4 * count] += TransitionMatrix::ComplexMult(
+                        MatricesU[k + i * 2 + 4 * count], MatricesUt[j + k * 2 + 4 * count]);
+                }
+            }
+        }
+    }
+
+    std::cout << "U * U_t matrices:\n";
+    for (int i = 0; i < 2 * NumberOfU; i++) {
+        for (int j = 0; j < 2; j++) {
+            std::cout << std::setw(30) << Res[j + i * 2];
+        }
+        std::cout << ((i % 2 == 1) ? "\n\n" : "\n");
+    }
+    std::cout << "\n";
+}
+
 void Experiments::GetTransitionMatrixAndNewRo(int N, bool show) {
     NeuralDensityOperators DensityOperators(N, N, N);
     DensityOperators.PrintRBMs();
@@ -176,12 +226,4 @@ void Experiments::GetSamples(int N, int NumberOfSamples) {
     delete[]NewRoMatrixDiag;
     delete[]Ub;
     delete[]Ub_t;
-}
-
-void Experiments::CheckUnitaryMatrices(int NumberOfU) {
-    TransitionMatrix TM;
-
-    MKL_Complex16* MatricesU = new MKL_Complex16[4 * NumberOfU];
-    TM.GetUnitaryMatrices(MatricesU, NumberOfU);
-    TM.ShowUnitaryMatrices(MatricesU, NumberOfU);
 }

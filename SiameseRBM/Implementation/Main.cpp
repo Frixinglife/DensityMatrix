@@ -13,8 +13,9 @@ int main() {
     //Experiments::GetTransitionMatrixAndNewRo(N, true);
     //Experiments::GetSamples(N, NumberOfSamples);
 
-    int NumberOfU = 2;
-    
+    int NumberOfU;
+    std::cin >> NumberOfU;
+    Experiments::CheckUnitaryMatrices(NumberOfU);
 
     return 0;
 }

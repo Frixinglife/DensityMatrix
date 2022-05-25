@@ -26,16 +26,39 @@ bool IsPowerOfTwo(int N) {
 	return N != 0 && (N & (N - 1)) == 0;
 }
 
+void TransitionMatrix::GetUnitaryMatrix(MKL_Complex16* Matrix, acc_number a, acc_number b, acc_number c, acc_number d) {
+	acc_number half = (acc_number)0.5;
+	acc_number two = (acc_number)2.0;
+	acc_number four = (acc_number)4.0;
+	acc_number sqrt_number = std::sqrt(a * a - two * a * d + four * b * b + four * c * c + d * d);
+	MKL_Complex16 i = MKL_Complex16(0.0, 1.0);
+
+	MKL_Complex16 exp_plus = std::exp(half * i * (sqrt_number + a + d));
+	MKL_Complex16 exp_minus = std::exp(half * i * (-sqrt_number + a + d));
+	
+	MKL_Complex16 elem_1 = ((sqrt_number + a - d) * exp_plus - (-sqrt_number + a - d) * exp_minus) / (two * sqrt_number);
+	MKL_Complex16 elem_4 = ((sqrt_number - a + d) * exp_plus - (-sqrt_number - a + d) * exp_minus) / (two * sqrt_number);
+
+	MKL_Complex16 elem_2 = ((b - i * c) * exp_plus - (b - i * c) * exp_minus) / sqrt_number;
+	MKL_Complex16 elem_3 = ((b + i * c) * exp_plus - (b + i * c) * exp_minus) / sqrt_number;
+
+	Matrix[0] = elem_1;
+	Matrix[1] = elem_2;
+	Matrix[2] = elem_3;
+	Matrix[3] = elem_4;
+}
+
 void TransitionMatrix::GetUnitaryMatrices(MKL_Complex16* Matrices, int NumberOfU, acc_number left, acc_number right) {
 	int N = 4 * NumberOfU;
 	acc_number* ElementsU = new acc_number[N];
 	TRngUniform(VSL_RNG_METHOD_UNIFORM_STD, stream, N, ElementsU, left, right);
-
+	
 	for (int index = 0; index < N; index += 4) {
-		Matrices[index] = MKL_Complex16(ElementsU[index], (acc_number)0.0);
-		Matrices[index + 1] = MKL_Complex16(ElementsU[index + 1], ElementsU[index + 2]);
-		Matrices[index + 2] = MKL_Complex16(ElementsU[index + 1], -ElementsU[index + 2]);
-		Matrices[index + 3] = MKL_Complex16(ElementsU[index + 3], (acc_number)0.0);
+		acc_number a = ElementsU[index];
+		acc_number b = ElementsU[index + 1];
+		acc_number c = ElementsU[index + 2];
+		acc_number d = ElementsU[index + 3];
+		GetUnitaryMatrix(Matrices + index, a, b, c, d);
 	}
 
 	delete[]ElementsU;
@@ -53,7 +76,7 @@ void TransitionMatrix::ShowUnitaryMatrices(MKL_Complex16* Matrices, int NumberOf
 	std::cout << "\n";
 }
 
-MKL_Complex16 ComplexMult(MKL_Complex16 A, MKL_Complex16 B) {
+MKL_Complex16 TransitionMatrix::ComplexMult(MKL_Complex16 A, MKL_Complex16 B) {
 	return MKL_Complex16(A.real() * B.real() - A.imag() * B.imag(), A.real() * B.imag() + B.real() * A.imag());
 }
 
