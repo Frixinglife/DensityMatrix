@@ -1,5 +1,6 @@
 #include "SiameseRBM.h"
 #include <iostream>
+#include <iomanip>
 
 using std::cout;
 
@@ -55,7 +56,7 @@ void SiameseRBM::PrintSiameseRBM(const std::string& NameRBM) const {
     cout << "W:" << "\n";
     for (int i = 0; i < N_h; ++i) {
         for (int j = 0; j < N_v; ++j) {
-            cout << W[j + i * N_v] << " ";
+            cout << std::setw(15) << W[j + i * N_v];
         }
         cout << "\n";
     }
@@ -64,7 +65,7 @@ void SiameseRBM::PrintSiameseRBM(const std::string& NameRBM) const {
     cout << "V:" << "\n";
     for (int i = 0; i < N_a; ++i) {
         for (int j = 0; j < N_v; ++j) {
-            cout << V[j + i * N_v] << " ";
+            cout << std::setw(15) << V[j + i * N_v];
         }
         cout << "\n";
     }

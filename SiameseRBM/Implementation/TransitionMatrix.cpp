@@ -26,11 +26,11 @@ bool IsPowerOfTwo(int N) {
 	return N != 0 && (N & (N - 1)) == 0;
 }
 
-void TransitionMatrix::GetUnitaryMatrix(MKL_Complex16* Matrix, acc_number a, acc_number b, acc_number c, acc_number d) {
-	acc_number half = (acc_number)0.5;
-	acc_number two = (acc_number)2.0;
-	acc_number four = (acc_number)4.0;
-	acc_number sqrt_number = std::sqrt(a * a - two * a * d + four * b * b + four * c * c + d * d);
+void TransitionMatrix::GetUnitaryMatrix(MKL_Complex16* Matrix, double a, double b, double c, double d) {
+	double half = 0.5;
+	double two = 2.0;
+	double four = 4.0;
+	double sqrt_number = std::sqrt(a * a - two * a * d + four * b * b + four * c * c + d * d);
 	MKL_Complex16 i = MKL_Complex16(0.0, 1.0);
 
 	MKL_Complex16 exp_plus = std::exp(half * i * (sqrt_number + a + d));
@@ -48,16 +48,16 @@ void TransitionMatrix::GetUnitaryMatrix(MKL_Complex16* Matrix, acc_number a, acc
 	Matrix[3] = elem_4;
 }
 
-void TransitionMatrix::GetUnitaryMatrices(MKL_Complex16* Matrices, int NumberOfU, acc_number left, acc_number right) {
+void TransitionMatrix::GetUnitaryMatrices(MKL_Complex16* Matrices, int NumberOfU, double left, double right) {
 	int N = 4 * NumberOfU;
-	acc_number* ElementsU = new acc_number[N];
-	TRngUniform(VSL_RNG_METHOD_UNIFORM_STD, stream, N, ElementsU, left, right);
+	double* ElementsU = new double[N];
+	vdRngUniform(VSL_RNG_METHOD_UNIFORM_STD, stream, N, ElementsU, left, right);
 	
 	for (int index = 0; index < N; index += 4) {
-		acc_number a = ElementsU[index];
-		acc_number b = ElementsU[index + 1];
-		acc_number c = ElementsU[index + 2];
-		acc_number d = ElementsU[index + 3];
+		double a = ElementsU[index];
+		double b = ElementsU[index + 1];
+		double c = ElementsU[index + 2];
+		double d = ElementsU[index + 3];
 		GetUnitaryMatrix(Matrices + index, a, b, c, d);
 	}
 

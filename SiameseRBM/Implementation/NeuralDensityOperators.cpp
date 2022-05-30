@@ -246,7 +246,7 @@ MKL_Complex16* NeuralDensityOperators::GetRoMatrix(double *work_time, bool plot)
     auto diff = std::chrono::high_resolution_clock::now() - start;
 
     if (work_time != nullptr) {
-        *work_time = static_cast<double>(std::chrono::duration_cast<std::chrono::seconds>(diff).count());
+        *work_time = static_cast<double>(std::chrono::duration_cast<std::chrono::milliseconds>(diff).count()) / 1000.0;
     }   
 
     if (plot) {

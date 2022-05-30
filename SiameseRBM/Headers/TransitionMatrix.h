@@ -14,8 +14,8 @@ public:
 
     MKL_Complex16* GetTransitionMatrix(int N, bool show = false);
     void GetUnitaryMatrices(MKL_Complex16* Matrices, int NumberOfU, 
-        acc_number left = (acc_number)0.0, acc_number right = (acc_number)1.0);
-    void GetUnitaryMatrix(MKL_Complex16* Matrix, acc_number a, acc_number b, acc_number c, acc_number d);
+        double left = 0.0, double right = 1.0);
+    void GetUnitaryMatrix(MKL_Complex16* Matrix, double a, double b, double c, double d);
     static MKL_Complex16 ComplexMult(MKL_Complex16 A, MKL_Complex16 B);
     void ShowUnitaryMatrices(MKL_Complex16* Matrices, int NumberOfU);
     void KroneckerProduction(MKL_Complex16* Matrix_A, int size_A, MKL_Complex16* Matrix_B, int size_B,
